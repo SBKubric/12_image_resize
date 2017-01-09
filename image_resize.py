@@ -62,8 +62,8 @@ def resize_image(path_to_original, path_to_result, args):
 
 if __name__ == '__main__':
     args = parse_args()
-    print('Resizing the file at {}'.format(args.file_path))
+    print('Resizing the file at ./{}'.format(args.file_path))
     resize_image(args.file_path, args.output, args)
-    print('Saved at {}'.format(args.output))
+    print('Saved at ./{}'.format(args.output))
 
 
