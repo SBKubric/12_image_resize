@@ -44,33 +44,29 @@ def get_image_ratio(image):
     return int(x / gcd(x, y)), int(y / gcd(x, y))
 
 
-def get_future_size(given_image, args):
+def resize_image(given_image, *, scale, future_x, future_y):
     current_x, current_y = given_image.size
     ratio_x, ratio_y = get_image_ratio(given_image)
-    scale = float(args.scale) if args.scale else None
-    future_width = round(float(args.width)) if args.width else None
-    future_height = round(float(args.height)) if args.height else None
+    scale = float(scale) if scale else None
+    future_x = round(float(future_x)) if future_x else None
+    future_y = round(float(future_y)) if future_y else None
     if scale:
-        return round(current_x*scale), round(current_y*scale)
-    if future_width and future_height:
-        return future_width, future_height
-    if future_width:
-        return future_width, round(future_width*ratio_y/ratio_x)
-    if args.height:
-        return round(future_height*ratio_x/ratio_y), future_height
-
-
-def resize_image(path_to_original, path_to_result, args):
-    given_image = Image.open(path_to_original)  # type: Image.Image
-    future_size = get_future_size(given_image, args)
-    resized = given_image.resize(future_size)
-    resized.save(path_to_result)
+        future_x = round(current_x * scale)
+        future_y = round(current_y * scale)
+    if future_x:
+        future_y = round(future_x * ratio_y / ratio_x)
+    if future_y:
+        future_x = round(future_y * ratio_x / ratio_y), future_y
+    return given_image.resize(future_x, future_y)
 
 
 if __name__ == '__main__':
     args = parse_args()
+    given_image = Image.open(args.file_path)  # type: Image.Image
     print('Resizing the file at ./{}'.format(args.file_path))
-    resize_image(args.file_path, args.output, args)
+    resized = resize_image(args.file_path, scale=args.scale, future_x=args.width, future_y=args.height)
     print('Saved at ./{}'.format(args.output))
+    resized.save(args.output)
+
 
 
